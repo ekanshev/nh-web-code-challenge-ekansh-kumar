@@ -17,10 +17,10 @@ function App() {
           {!result && (
             <div className="intro-section">
               <h2>Find the Perfect Clinician for Every Visit</h2>
-              <p>
+              {/* <p>
                 Our intelligent dispatch system automatically matches patients with the optimal clinician
                 based on location, lab requirements, and real-time availability.
-              </p>
+              </p> */}
 
               <div className="feature-grid">
                 <div className="feature-item">
@@ -66,7 +66,7 @@ function App() {
 
       <footer className="footer">
         <div className="container">
-          <div className="footer-content">
+          {/* <div className="footer-content">
             <div className="footer-section">
               <h4>About This System</h4>
               <p>
@@ -95,7 +95,7 @@ function App() {
                 <li>Responsive modern UI design</li>
               </ul>
             </div>
-          </div>
+          </div> */}
 
           <div className="footer-bottom">
             <p>© 2026 Nice Healthcare - Clinician Dispatch System</p>

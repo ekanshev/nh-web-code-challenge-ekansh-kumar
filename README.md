@@ -1,13 +1,5 @@
 # Nice Healthcare - Clinician Dispatch Dashboard
 
-> Optimizing clinician assignment for home visits by minimizing total round-trip distance
-
-## Overview
-
-This application helps Nice Healthcare coordinators assign the optimal clinician to a patient visit request. It supports two visit types:
-- **Standard Visit**: Clinician Home → Patient → Clinician Home
-- **Lab Visit**: Clinician Home → Patient → Nearest Lab → Clinician Home
-
 ## Quick Start
 
 ```bash
@@ -16,11 +8,21 @@ npm run dev
 # Open http://localhost:5173
 ```
 
+## 📋 Important Resources
+
+**📊 [Presentation Slides](https://docs.google.com/presentation/d/1d6SZ3m2114kMJi7AR-UuAIAxQxiAPMyP/edit?usp=drive_link&ouid=116334341324263710450&rtpof=true&sd=true)**: Project overview and key findings for interview discussion
+
+**🏗️ [System Design Documentation](https://deluxe-daffodil-ce678a.netlify.app/)**: Scalability architecture and technical diagrams
+
+**🚀 [Live Application](https://stellular-baklava-557562.netlify.app/)**: Deployed clinician dispatch dashboard
+
+---
+
+
 ## Tech Stack
 
 - React 18 + TypeScript
-- Vite
-- Haversine formula for distance calculation (BONUS implemented)
+- Haversine formula for distance calculation
 
 ## Features
 
@@ -37,9 +39,8 @@ npm run dev
 **Complexity**: O(n × m) where n = clinicians, m = labs
 
 1. Geocode patient address to coordinates
-2. For each clinician, build route (with or without lab)
-3. Calculate total round-trip distance using Haversine
-4. Return clinician with minimum distance
+2. Calculate total round-trip distance using Haversine
+3. Return clinician with minimum distance
 
 **Distance Calculation**: Haversine formula calculates crow-flies distance between coordinates. Accurate within ±20-30% of actual driving distance.
 
@@ -64,7 +65,7 @@ npm run dev
 
 ### 4. Single Visit Optimization
 **Assumption**: Each visit optimized independently  
-**Reality**: Clinicians do 4-8 visits per day  
+**Reality**: Clinicians do 6-10 visits per day  
 **Trade-off**: Greedy local optimization is simple but doesn't consider daily route clustering. Production needs batch optimization (TSP solver).
 
 ### 5. Address Validation
@@ -131,7 +132,6 @@ npm run dev
 **Workload Balancing**
 - Track visits/day, miles/day, hours worked
 - Prevent burnout, ensure fairness
-- Impact: Reduces $50k-100k turnover cost per clinician
 
 **Equipment Availability**
 - Portable X-ray, ultrasound, EKG machines
@@ -145,155 +145,3 @@ npm run dev
 
 **Continuity of Care**
 - Chronic condition patients do better seeing same clinician
-- Studies show 20-30% better health outcomes
-
-**Language Matching**
-- Spanish, Hmong, Somali common in Minnesota market
-- Better communication = better diagnosis
-
-**Visit Complexity**
-- Simple visits → less experienced clinicians
-- Complex cases → senior clinicians
-
-### Temporal Factors
-
-**Traffic Patterns**
-- 10 miles at 10am ≠ 10 miles at 5pm
-- Rush hour adds 40% time
-
-**Clustering Opportunities**
-- Multiple visits in same neighborhood
-- Assign same clinician = efficient routing
-- Can increase visits/day by 30%
-
-**Lab Operating Hours**
-- Some labs close at 5pm
-- Last acceptance often 30min before close
-
-### Business Factors
-
-**Cost Per Mile**
-- $0.67/mile (IRS 2024 rate)
-- Senior clinicians cost more per hour
-- Optimize for total cost, not just distance
-
-**Contract SLAs**
-- Some employers guarantee <2 hour response
-- SLA visits override distance optimization
-
-**Lab Partnerships**
-- Volume discounts with preferred labs
-- Factor in business relationships
-
-### Quality Factors
-
-**Infection Control**
-- Don't send immunocompromised visit after sick visit
-- Require equipment sterilization time
-
-**Licensing**
-- Can't cross state lines (Minnesota clinician can't treat Wisconsin patient in some cases)
-- Legal requirement
-
----
-
-## Production Roadmap
-
-### Phase 1 (Months 1-3): Core Fixes
-- Google Maps Distance Matrix API
-- Calendar integration for availability
-- Lab hours database
-- Address validation (Google Places)
-- Redis caching for common routes
-
-### Phase 2 (Months 4-6): Advanced Optimization
-- Multi-visit route optimization (TSP solver)
-- Time window support
-- Skills-based matching
-- Workload balancing
-- Real-time GPS tracking
-
-### Phase 3 (Months 7-12): Intelligence
-- ML models for visit duration prediction
-- Traffic pattern prediction
-- Automated route suggestions
-- Mobile app for clinicians
-
----
-
-## Scalability Plan
-
-| Phase | Clinicians | Requests/Day | Infrastructure | Response Time |
-|-------|-----------|--------------|----------------|---------------|
-| **MVP** (Current) | 7 | 10 | Static data | <5ms |
-| **Phase 1** | 50 | 100 | Redis + PostgreSQL | <50ms |
-| **Phase 2** | 200 | 1,000 | Load balancer + horizontal scaling | <80ms |
-| **Phase 3** | 500 | 5,000 | Kubernetes + spatial indexing | <100ms |
-| **Phase 4** | 2,000+ | 10,000+ | Multi-region + microservices | <150ms |
-
-**Key Optimizations**:
-- **50+ clinicians**: Add Redis caching, avoid recalculating same routes
-- **200+ clinicians**: Horizontal scaling, read replicas for database
-- **500+ clinicians**: Spatial indexing (R-tree), only search within 50-mile radius
-- **2000+ clinicians**: Geographic sharding, microservices architecture
-
----
-
-## Testing
-
-```bash
-npm test              # Run unit tests
-npm test -- --watch   # Watch mode
-npm test -- --coverage # Coverage report
-```
-
-**Test Coverage**:
-- Distance calculations (Haversine accuracy)
-- Input validation
-- Clinician matching logic
-- Route building (standard vs lab visits)
-
----
-
-## Architecture
-
-**Three-Tier Design**:
-1. **Presentation Layer**: React components, state management
-2. **Business Logic**: Clinician matcher, distance calculator
-3. **Data Layer**: Clinicians, labs, geocoded coordinates
-
-**Key Design Decisions**:
-- React hooks for state (simple, no external dependencies)
-- Pure functions in services (easy to test)
-- Haversine over random (demonstrates geospatial understanding)
-- Top 3 results (shows product thinking beyond requirements)
-
----
-
-## File Structure
-
-```
-src/
-├── components/          # React UI components
-├── services/           # Business logic (matcher, calculator)
-├── types/              # TypeScript definitions
-├── data/               # Clinicians and labs data
-├── utils/              # Helpers (Haversine, validators)
-└── hooks/              # Custom React hooks
-```
-
----
-
-## Business Impact
-
-Every optimization matters for Nice Healthcare:
-- **$510 annual savings per employee** (their metric)
-- **Each mile saved** = $0.67 in costs
-- **1-2 more visits/day** per clinician = 30% capacity increase
-- **Better routing** = happier clinicians = lower $50k-100k turnover
-
-This assignment demonstrates understanding that **dispatch optimization is core to Nice's business model**, not just a technical exercise.
-
----
-
-Built for Nice Healthcare Take-Home Assignment | React + TypeScript | 2024
